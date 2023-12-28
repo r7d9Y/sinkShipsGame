@@ -127,7 +127,10 @@ public class sinkShipsGame {
     }
 
     /**
-     * this methode creates the start Field with the "ships" in it
+     * Creates the start field with randomly placed ships based on the given number of ships
+     *
+     * @param nShips The number of ships to be placed on the start field
+     * @return A two-dimensional character array representing the start field
      */
     public static char[][] createStartField(int nShips) {
 
@@ -205,14 +208,28 @@ public class sinkShipsGame {
     }
 
 
+    /**
+     * Checks if a position is allowed for placing a ship of a specific size on the start field
+     *
+     * @param a         The start field
+     * @param yPosStart The starting y-coordinate of the ship
+     * @param yPosEnd   The ending y-coordinate of the ship
+     * @param xPosStart The starting x-coordinate of the ship
+     * @param xPosEnd   The ending x-coordinate of the ship
+     * @return is true if the position is allowed, false otherwise.
+     */
     public static boolean isAllowedPositionForBiggerShips(char[][] a, int yPosStart, int yPosEnd, int xPosStart, int xPosEnd) {
         return IntStream.rangeClosed(yPosStart, yPosEnd)
                 .noneMatch(i -> IntStream.rangeClosed(xPosStart, xPosEnd).anyMatch(j -> !isAllowedPosition(a, i, j)));
     }
 
     /**
-     * this methode checks if the a[yPos][xPos] is a valid position for a "ship(spart)" to be "placed".
-     * (the one above uses this one for bigger "ships")
+     * Checks if a position is allowed for placing a ship (single-cell) on the start field
+     *
+     * @param a    The start field
+     * @param yPos The y-coordinate of the position
+     * @param xPos The x-coordinate of the position
+     * @return {@code true} if the position is allowed, {@code false} otherwise
      */
     public static boolean isAllowedPosition(char[][] a, int yPos, int xPos) {
         try {
@@ -255,7 +272,10 @@ public class sinkShipsGame {
     }
 
     /**
-     * this methode indexes the colum value
+     * this methode indexes the column value based on the user's input string
+     *
+     * @param s The user's input string representing the position
+     * @return The column index  or -1 if the input is invalid
      */
     public static int getCol(String s) {
         char c = (s.toLowerCase()).charAt(s.length() - 1);
@@ -264,6 +284,7 @@ public class sinkShipsGame {
 
     /**
      * this methode indexes the row value
+     * (the rest is the same as above)
      */
     public static int getRow(String s) {
         if ((s.length() == 3 && !Character.isDigit(s.charAt(1))) || (s.length() == 3 && !Character.isDigit(s.charAt(0)))) {
@@ -288,12 +309,10 @@ public class sinkShipsGame {
      * this methode prints out the playField in the console
      */
     public static void printPlayField() {
-        StringBuilder s = new StringBuilder();
-        s.append("   ");
-        for (int i = 0; i < playField[0].length; i++) {
-            s.append((char) (i + 97)).append(" ");
-        }
+        StringBuilder s = new StringBuilder().append("   ");
+        IntStream.range(0, playField[0].length).forEach(i -> s.append((char) (i + 97)).append(" "));
         s.append("\n");
+
         for (int y = 0; y < playFieldHeigth; y++) {
             s.append(String.format("%2d ", y + 1));
             for (int x = 0; x < playFieldWidth; x++) {
@@ -301,6 +320,7 @@ public class sinkShipsGame {
             }
             s.append("\n");
         }
+
         System.out.println(s);
     }
 
@@ -308,24 +328,20 @@ public class sinkShipsGame {
      * this methode prints out the solution if the user decides to end the game before all fields occupied with ships are found
      */
     public static void printSolution() {
-        StringBuilder s = new StringBuilder();
-        s.append("   ");
-        for (int i = 0; i < playFieldWidth; i++) {
-            s.append((char) (i + 'a')).append(" ");
-        }
+        StringBuilder s = new StringBuilder().append("   ");
+        IntStream.range(0, playFieldWidth).forEach(i -> s.append((char) (i + 'a')).append(" "));
         s.append("\n");
+
         for (int y = 0; y < playField.length; y++) {
             s.append(String.format("%2d", y + 1)).append(" ");
             for (int x = 0; x < playField[y].length; x++) {
                 if (startField[y][x] == '+' && playField[y][x] == '?') {
                     s.append("+ ");
-                } else if (startField[y][x] == '-') {
-                    s.append("- ");
                 } else {
-                    s.append(playField[y][x]).append(" ");
+                    s.append(startField[y][x] == '-' ? "- " : playField[y][x] + " ");
                 }
+                s.append("\n");
             }
-            s.append("\n");
         }
 
         System.out.println(s);
@@ -334,7 +350,10 @@ public class sinkShipsGame {
     }
 
     /**
-     * this methode checks the value in playField/StartField at the given Position row/col
+     * Checks the value in playField/StartField at the given position (row, col)
+     *
+     * @param row The row index of the position
+     * @param col The column index of the position
      */
     public static void checkPlayField(int row, int col) {
 
@@ -363,11 +382,8 @@ public class sinkShipsGame {
     public static int getMinimum(int[] a) {
         int s = a[0];
 
-        for (int j : a) {
-            if (j < s) {
-                s = j;
-            }
-        }
+        for (int j : a)
+            if (j < s) s = j;
 
         return s;
     }
@@ -376,12 +392,6 @@ public class sinkShipsGame {
      * this methode returns the sum of the values in a
      */
     public static int getSumme(int[] a) {
-        int s = 0;
-
-        for (int j : a) {
-            s += j;
-        }
-
-        return s;
+        return Arrays.stream(a).sum();
     }
 }
